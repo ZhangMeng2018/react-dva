@@ -1,14 +1,20 @@
 import React from 'react';
 import { connect } from 'dva';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
-import { Route } from 'dva/router';
+import { Route, Link, Redirect } from 'dva/router';
 import 'antd/dist/antd.css';
 
-import Home from '../Home/index';
+import CustomerManagement from '../CustomerManagement/index';
+import ContactManagement from '../ContactManagement/index';
+import SystemManagement from '../SystemManagement/index';
 import NAMESPACE from '../../models/appContainer/namespace.js'
+import navConfig from './navConfig'
+
+import style from './index.less'
 
 const { SubMenu } = Menu;
 const { Header, Content, Sider } = Layout;
+const { sideNavConfig } = navConfig;
 
 const mapStateToProps = (state) => ({
   ...state[NAMESPACE]
@@ -49,11 +55,11 @@ export default class AppContainer extends React.Component {
   };
   render() {
     const { a, b } = this.props;
-    console.log(this.props, 'this.props')
+    console.log(sideNavConfig, 'sideNavConfig')
     return (
-      <Layout>
-        <Header className="header">
-          <div className="logo" />
+      <Layout className={style.container}>
+        <Header className={style.header}>
+          <div className={style.logo} />
           <Menu
             theme="dark"
             mode="horizontal"
@@ -69,52 +75,31 @@ export default class AppContainer extends React.Component {
           <Sider width={200} style={{ background: '#fff' }}>
             <Menu
               mode="inline"
-              defaultSelectedKeys={['1']}
-              defaultOpenKeys={['sub1']}
+              defaultSelectedKeys={['0']}
+              defaultOpenKeys={[sideNavConfig[0].key]}
               style={{ height: '100%', borderRight: 0 }}
             >
-              <SubMenu
-                key="sub1"
-                title={
-                  <span>
-                <Icon type="user" />
-                subnav 1
-              </span>
-                }
-              >
-                <Menu.Item key="1">option2</Menu.Item>
-                <Menu.Item key="2">option2</Menu.Item>
-                <Menu.Item key="3">option3</Menu.Item>
-                <Menu.Item key="4">option4</Menu.Item>
-              </SubMenu>
-              <SubMenu
-                key="sub2"
-                title={
-                  <span>
-                <Icon type="laptop" />
-                subnav 2
-              </span>
-                }
-              >
-                <Menu.Item key="5">option5</Menu.Item>
-                <Menu.Item key="6">option6</Menu.Item>
-                <Menu.Item key="7">option7</Menu.Item>
-                <Menu.Item key="8">option8</Menu.Item>
-              </SubMenu>
-              <SubMenu
-                key="sub3"
-                title={
-                  <span>
-                <Icon type="notification" />
-                subnav 3
-              </span>
-                }
-              >
-                <Menu.Item key="9">option9</Menu.Item>
-                <Menu.Item key="10">option10</Menu.Item>
-                <Menu.Item key="11">option11</Menu.Item>
-                <Menu.Item key="12">option12</Menu.Item>
-              </SubMenu>
+              {
+                sideNavConfig.map(sideNav => (
+                  <SubMenu
+                    key={sideNav.key}
+                    title={
+                      <span>
+                        <Icon type="user" />
+                        {sideNav.title}
+                      </span>
+                    }
+                  >
+                    {
+                      sideNav.items.map((item, index) => (
+                        <Menu.Item key={index}>
+                          <Link to={item.path}>{item.title}</Link>
+                        </Menu.Item>
+                      ))
+                    }
+                  </SubMenu>
+                ))
+              }
             </Menu>
           </Sider>
           <Layout style={{ padding: '0 24px 24px' }}>
@@ -131,7 +116,17 @@ export default class AppContainer extends React.Component {
                 minHeight: 280,
               }}
             >
-              <Route path="/app/home" component={Home} />
+              <Route
+                exact
+                path="/app"
+                render={()=>(
+                  <Redirect to="/app/customerManagement" />
+                )}
+              />
+              <Route path="/app/customerManagement" component={CustomerManagement} />
+              <Route path="/app/contactManagement" component={ContactManagement} />
+              <Route path="/app/systemManagement" component={SystemManagement} />
+              {/*<Redirect from="/app" to="/app/customerManagement" />*/}
             </Content>
           </Layout>
         </Layout>
