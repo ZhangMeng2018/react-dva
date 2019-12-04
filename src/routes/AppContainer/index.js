@@ -3,6 +3,7 @@ import { connect } from 'dva';
 import { Layout, Menu, Breadcrumb, Icon } from 'antd';
 import { Route, Link, Redirect } from 'dva/router';
 import 'antd/dist/antd.css';
+import download from 'downloadjs';
 
 import CustomerManagement from '../CustomerManagement/index';
 import ContactManagement from '../ContactManagement/index';
@@ -52,6 +53,9 @@ export default class AppContainer extends React.Component {
 
   changeAB = () => {
     this.props.fetch()
+  };
+  componentDidMount() {
+	  download(new Blob(["hello world".bold()]), "dlHtmlBlob.html", "text/html");
   };
   render() {
     const { a, b } = this.props;
